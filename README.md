@@ -10,14 +10,16 @@ ecommerce-project/
 ├── backend/                     # Flask + MySQL (DB layer)
 │   ├── app.py                   # Main Flask app with routes
 │   ├── db.py                    # DB connection (MySQL)
-│   ├── models/                  # Optional - query functions
+│   ├── models/                  # Query functions
 │   │   ├── customers.py
 │   │   ├── products.py
 │   │   ├── cart.py
 │   │   ├── orders.py
 │   │   ├── payments.py
 │   │   ├── reviews.py
-│   │   └── categories.py
+│   │   ├── categories.py
+│   │   ├── login.py             # Login-related queries
+│   │   └── signup.py            # Signup-related queries
 │   ├── requirements.txt         # Flask, mysql-connector, etc.
 │   └── config.py                # DB credentials
 │
@@ -58,10 +60,10 @@ ecommerce-project/
 - Responsive design
 
 ## Technologies Used
-- Frontend: [Add your frontend framework]
-- Backend: [Add your backend framework]
-- Database: [Add your database]
-- Authentication: [Add auth solution]
+- Frontend: React.js
+- Backend: Flask
+- Database: MySQL
+- Authentication: JWT (JSON Web Tokens)
 
 ## Installation
 
@@ -71,19 +73,33 @@ git clone https://github.com/yourusername/ecommerce-project.git
 cd ecommerce-project
 ```
 
-2. Install dependencies
+2. Install backend dependencies
 ```bash
+cd backend
+pip install -r requirements.txt
+```
+
+3. Install frontend dependencies
+```bash
+cd ../frontend
 npm install
 ```
 
-3. Set up environment variables
+4. Set up environment variables
 ```bash
 cp .env.example .env
 # Configure your environment variables
 ```
 
-4. Run the application
+5. Run the backend server
 ```bash
+cd ../backend
+python app.py
+```
+
+6. Run the frontend application
+```bash
+cd ../frontend
 npm start
 ```
 
