@@ -1,126 +1,97 @@
--- Create database (compatible with mysqlconnector)
+-- create database if not exists
 CREATE DATABASE IF NOT EXISTS ecommerce_db;
 USE ecommerce_db;
 
--- Users table
-CREATE TABLE User (
-    user_id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) UNIQUE NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    last_login DATETIME NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- Customers
+CREATE TABLE IF NOT EXISTS customers (
+  customer_id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100),
+  email VARCHAR(100) UNIQUE,
+  password VARCHAR(255),
+  is_admin TINYINT DEFAULT 0
 );
 
--- Admin profile table
-CREATE TABLE Admin (
-    admin_id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT UNIQUE NOT NULL,
-    name VARCHAR(100) NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE
+-- Categories
+CREATE TABLE IF NOT EXISTS categories (
+  category_id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) UNIQUE
 );
 
--- Customer profile table
-CREATE TABLE Customer (
-    customer_id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT UNIQUE NOT NULL,
-    name VARCHAR(100) NOT NULL,
-    phone VARCHAR(20),
-    address TEXT,
-    FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE
+-- Products
+CREATE TABLE IF NOT EXISTS products (
+  product_id INT AUTO_INCREMENT PRIMARY KEY,
+  category_id INT,
+  name VARCHAR(150),
+  price DECIMAL(10,2),
+  stock INT,
+  description TEXT,
+  FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE SET NULL
 );
 
--- Category table
-CREATE TABLE Category (
-    category_id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    description TEXT,
-    parent_category_id INT NULL,
-    FOREIGN KEY (parent_category_id) REFERENCES Category(category_id) ON DELETE SET NULL
+-- Cart
+CREATE TABLE IF NOT EXISTS cart (
+  cart_id INT AUTO_INCREMENT PRIMARY KEY,
+  customer_id INT,
+  product_id INT,
+  quantity INT,
+  added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (customer_id) REFERENCES customers(customer_id) ON DELETE CASCADE,
+  FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE
 );
 
--- Product table
-CREATE TABLE Product (
-    product_id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(200) NOT NULL,
-    description TEXT,
-    price FLOAT NOT NULL,
-    quantity INT DEFAULT 0,
-    category_id INT NOT NULL,
-    admin_id INT NOT NULL,  
-    FOREIGN KEY (category_id) REFERENCES Category(category_id),
-    FOREIGN KEY (admin_id) REFERENCES Admin(admin_id)
+-- Orders
+CREATE TABLE IF NOT EXISTS orders (
+  order_id INT AUTO_INCREMENT PRIMARY KEY,
+  customer_id INT,
+  order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  status VARCHAR(30) DEFAULT 'placed',
+  FOREIGN KEY (customer_id) REFERENCES customers(customer_id) ON DELETE CASCADE
 );
 
--- Cart table
-CREATE TABLE Cart (
-    cart_id INT AUTO_INCREMENT PRIMARY KEY,
-    customer_id INT NOT NULL,
-    FOREIGN KEY (customer_id) REFERENCES Customer(customer_id) ON DELETE CASCADE
+-- Order Items
+CREATE TABLE IF NOT EXISTS order_items (
+  order_item_id INT AUTO_INCREMENT PRIMARY KEY,
+  order_id INT,
+  product_id INT,
+  quantity INT,
+  price DECIMAL(10,2),
+  FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
+  FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE SET NULL
 );
 
--- Cart items table
-CREATE TABLE Cart_Item (
-    cart_item_id INT AUTO_INCREMENT PRIMARY KEY,
-    cart_id INT NOT NULL,
-    product_id INT NOT NULL,
-    quantity INT NOT NULL DEFAULT 1,
-    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (cart_id) REFERENCES Cart(cart_id) ON DELETE CASCADE,
-    FOREIGN KEY (product_id) REFERENCES Product(product_id) ON DELETE CASCADE,
-    UNIQUE KEY unique_cart_product (cart_id, product_id)
+-- Payments
+CREATE TABLE IF NOT EXISTS payments (
+  payment_id INT AUTO_INCREMENT PRIMARY KEY,
+  order_id INT,
+  payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  amount DECIMAL(10,2),
+  method VARCHAR(30),
+  status VARCHAR(30),
+  FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE
 );
 
--- Order table (renamed from Orders to avoid keyword conflict)
-CREATE TABLE `Order` (
-    order_id INT AUTO_INCREMENT PRIMARY KEY,
-    customer_id INT NOT NULL,
-    total_amount DECIMAL(10,2) NOT NULL,
-    shipping_address TEXT NOT NULL,
-    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    order_status ENUM('pending', 'confirmed', 'shipped', 'delivered', 'cancelled') DEFAULT 'pending',
-    FOREIGN KEY (customer_id) REFERENCES Customer(customer_id)
+-- Reviews
+CREATE TABLE IF NOT EXISTS reviews (
+  review_id INT AUTO_INCREMENT PRIMARY KEY,
+  customer_id INT,
+  product_id INT,
+  rating INT,
+  comment TEXT,
+  review_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (customer_id) REFERENCES customers(customer_id) ON DELETE SET NULL,
+  FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE
 );
 
--- Order items table
-CREATE TABLE Order_Item (
-    order_item_id INT AUTO_INCREMENT PRIMARY KEY,
-    order_id INT NOT NULL,
-    product_id INT NOT NULL,
-    quantity INT NOT NULL,
-    unit_price FLOAT NOT NULL,
-    FOREIGN KEY (order_id) REFERENCES `Order`(order_id) ON DELETE CASCADE,
-    FOREIGN KEY (product_id) REFERENCES Product(product_id)
-);
+-- Insert a default admin (change password if you want)
+INSERT IGNORE INTO customers (name, email, password, is_admin)
+VALUES ('Admin', 'admin@ecommerce.com', 'admin123', 1);
 
--- Payment table
-CREATE TABLE Payment (
-    payment_id INT AUTO_INCREMENT PRIMARY KEY,
-    order_id INT UNIQUE NOT NULL,
-    amount FLOAT NOT NULL,
-    payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    payment_status ENUM('pending', 'completed', 'failed', 'refunded') DEFAULT 'pending',
-    FOREIGN KEY (order_id) REFERENCES `Order`(order_id) ON DELETE CASCADE
-);
+-- Insert sample category and products
+INSERT IGNORE INTO categories (name) VALUES ('Electronics'), ('Books'), ('Clothing');
 
--- Review table
-CREATE TABLE Review (
-    review_id INT AUTO_INCREMENT PRIMARY KEY,
-    customer_id INT NOT NULL,
-    product_id INT NOT NULL,
-    rating INT,
-    comment TEXT,
-    FOREIGN KEY (customer_id) REFERENCES Customer(customer_id) ON DELETE CASCADE,
-    FOREIGN KEY (product_id) REFERENCES Product(product_id) ON DELETE CASCADE,
-    UNIQUE KEY unique_customer_product (customer_id, product_id),
-    CONSTRAINT chk_rating CHECK (rating >= 1 AND rating <= 5)
-);
-
--- Create indexes
-CREATE INDEX idx_product_category ON Product(category_id);
-CREATE INDEX idx_product_admin ON Product(admin_id);
-CREATE INDEX idx_order_customer ON `Order`(customer_id);
-CREATE INDEX idx_order_status ON `Order`(order_status);
-CREATE INDEX idx_payment_order ON Payment(order_id);
-CREATE INDEX idx_review_product ON Review(product_id);
-CREATE INDEX idx_cart_customer ON Cart(customer_id);
+INSERT IGNORE INTO products (category_id, name, price, stock, description)
+VALUES
+ ((SELECT category_id FROM categories WHERE name='Electronics'), 'Wireless Mouse', 499.00, 50, 'Comfortable wireless mouse'),
+ ((SELECT category_id FROM categories WHERE name='Electronics'), 'Bluetooth Headphones', 1299.00, 30, 'Noise cancelling'),
+ ((SELECT category_id FROM categories WHERE name='Books'), 'Learn Python', 399.00, 100, 'Beginner book'),
+ ((SELECT category_id FROM categories WHERE name='Clothing'), 'Plain T-Shirt', 299.00, 80, 'Cotton tee');

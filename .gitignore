@@ -46,3 +46,5 @@ Thumbs.db
 
 ecommerce-project/frontend/node_modules/
 ecommerce-project/frontend/build/
+
+__pycache__ 
