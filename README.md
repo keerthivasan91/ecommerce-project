@@ -47,7 +47,6 @@ ecommerce-project/
 │
 └── database/
     └── schema.sql               # SQL CREATE TABLEs
-
 ```
 
 ## Features
@@ -63,7 +62,6 @@ ecommerce-project/
 - Frontend: React.js
 - Backend: Flask
 - Database: MySQL
-- Authentication: JWT (JSON Web Tokens)
 
 ## Installation
 
@@ -85,19 +83,13 @@ cd ../frontend
 npm install
 ```
 
-4. Set up environment variables
-```bash
-cp .env.example .env
-# Configure your environment variables
-```
-
-5. Run the backend server
+4. Run the backend server
 ```bash
 cd ../backend
 python app.py
 ```
 
-6. Run the frontend application
+5. Run the frontend application
 ```bash
 cd ../frontend
 npm start
