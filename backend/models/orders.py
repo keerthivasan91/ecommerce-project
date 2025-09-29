@@ -90,3 +90,39 @@ def get_all_orders():
     finally:
         cursor.close()
         conn.close()  # removed the extra /
+
+@orders_bp.route("/user/<int:customer_id>", methods=["GET"])
+def get_user_orders(customer_id):
+    conn = get_db()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("""
+            SELECT o.order_id, o.customer_id, o.order_date, oi.order_item_id,
+                   oi.product_id, p.name, oi.quantity, oi.price
+            FROM orders o
+            JOIN order_items oi ON o.order_id = oi.order_id
+            JOIN products p ON oi.product_id = p.product_id
+            WHERE o.customer_id=%s
+        """, (customer_id,))
+        rows = cursor.fetchall()
+        orders_dict = defaultdict(lambda: {"items": []})
+        for r in rows: # type: ignore
+            order_id = r[0]
+            if "order_id" not in orders_dict[order_id]:
+                orders_dict[order_id].update({
+                    "order_id": r[0],
+                    "customer_id": r[1],
+                    "date_created": r[2],
+                    "items": []
+                })
+            orders_dict[order_id]["items"].append({
+                "order_item_id": r[3],
+                "product_id": r[4],
+                "name": r[5],
+                "quantity": r[6],
+                "price": float(r[7])
+            })
+        return jsonify(list(orders_dict.values()))
+    finally:
+        cursor.close()
+        conn.close()

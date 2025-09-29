@@ -35,15 +35,19 @@ def add_review():
 
 @reviews_bp.route('/<int:product_id>', methods=['GET'])
 def get_reviews(product_id):
+    # Only fetch reviews, no credentials required
     conn = get_db()
     cursor = conn.cursor()
     try:
         cursor.execute(
-            "SELECT r.*, c.name FROM reviews r LEFT JOIN customers c ON r.customer_id=c.customer_id WHERE r.product_id=%s",
-            (product_id,)
-        )
+    "SELECT r.*, c.name FROM reviews r "
+    "LEFT JOIN customers c ON r.customer_id=c.customer_id "
+    "WHERE r.product_id=%s",
+    (product_id,)
+)
+
         data = dict_from_cursor(cursor)
-        return jsonify(data)
+        return jsonify(data)  # Returns list of reviews directly
     finally:
         cursor.close()
         conn.close()

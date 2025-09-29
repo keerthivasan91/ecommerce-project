@@ -102,9 +102,8 @@ def update_product(product_id):
 
 @products_bp.route('/<int:product_id>', methods=['DELETE'])
 def delete_product(product_id):
-    data = request.get_json() or {}
-    admin_email = data.get("admin_email")
-    admin_password = data.get("admin_password")
+    admin_email = request.args.get("admin_email")
+    admin_password = request.args.get("admin_password")
 
     if not (admin_email and admin_password):
         return jsonify({"success": False, "message": "Admin credentials required"}), 401

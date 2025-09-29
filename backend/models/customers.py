@@ -38,6 +38,57 @@ def signup():
         cursor.close()
         conn.close()
 
+@customers_bp.route('', methods=['POST'])
+def add_customer():
+    data = request.get_json()
+    admin_email = data.get("admin_email")
+    admin_password = data.get("admin_password")
+
+    # Check admin credentials
+    if not (admin_email and admin_password):
+        return jsonify({"success": False, "message": "Admin credentials required"}), 401
+
+    conn = get_db()
+    cursor = conn.cursor()
+    try:
+        # Verify admin
+        cursor.execute(
+            "SELECT is_admin FROM customers WHERE email=%s AND password=%s",
+            (admin_email, admin_password)
+        )
+        row = cursor.fetchone()
+        if not row or row[0] != 1:
+            return jsonify({"success": False, "message": "Not authorized"}), 403
+
+        # Validate input
+        name = data.get("name")
+        email = data.get("email")
+        password = data.get("password")
+        is_admin = data.get("is_admin", 0)  # Default to 0 if not provided
+
+        if not (name and email and password):
+            return jsonify({"success": False, "message": "Name, email, and password are required"}), 400
+
+        # Check if email already exists
+        cursor.execute("SELECT customer_id FROM customers WHERE email=%s", (email,))
+        if cursor.fetchone():
+            return jsonify({"success": False, "message": "Email already registered"}), 400
+
+        # Insert customer
+        cursor.execute(
+            "INSERT INTO customers (name, email, password, is_admin) VALUES (%s, %s, %s, %s)",
+            (name, email, password, is_admin)
+        )
+        conn.commit()
+        return jsonify({"success": True, "message": "Customer added successfully"})
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"success": False, "message": str(e)}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
+
 @customers_bp.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
