@@ -86,12 +86,24 @@ CREATE TABLE IF NOT EXISTS reviews (
 INSERT IGNORE INTO customers (name, email, password, is_admin)
 VALUES ('Admin', 'admin@ecommerce.com', 'admin123', 1);
 
--- Insert sample category and products
-INSERT IGNORE INTO categories (name) VALUES ('Electronics'), ('Books'), ('Clothing');
+-- Insert categories with manual IDs
+INSERT INTO categories (category_id, name) VALUES
+(1, 'Electronics'),
+(2, 'Books'),
+(3, 'Clothing'),
+(4, 'Home Appliances'),
+(5, 'Sports');
 
-INSERT IGNORE INTO products (category_id, name, price, stock, description)
-VALUES
- ((SELECT category_id FROM categories WHERE name='Electronics'), 'Wireless Mouse', 499.00, 50, 'Comfortable wireless mouse'),
- ((SELECT category_id FROM categories WHERE name='Electronics'), 'Bluetooth Headphones', 1299.00, 30, 'Noise cancelling'),
- ((SELECT category_id FROM categories WHERE name='Books'), 'Learn Python', 399.00, 100, 'Beginner book'),
- ((SELECT category_id FROM categories WHERE name='Clothing'), 'Plain T-Shirt', 299.00, 80, 'Cotton tee');
+-- Insert products with manual IDs
+INSERT INTO products (product_id, category_id, name, price, stock, description) VALUES
+(1, 1, 'Wireless Mouse', 499.00, 50, 'Comfortable wireless mouse'),
+(2, 1, 'Bluetooth Headphones', 1299.00, 30, 'Noise cancelling headphones'),
+(3, 1, 'Smartphone', 15999.00, 25, 'Latest Android smartphone'),
+(4, 2, 'Learn Python', 399.00, 100, 'Beginner-friendly Python book'),
+(5, 2, 'Data Structures Book', 499.00, 80, 'Learn Data Structures effectively'),
+(6, 3, 'Plain T-Shirt', 299.00, 80, 'Cotton tee'),
+(7, 3, 'Jeans', 999.00, 40, 'Denim jeans for daily wear'),
+(8, 4, 'Microwave Oven', 5499.00, 15, 'Compact microwave oven'),
+(9, 4, 'Blender', 1999.00, 20, 'High-speed blender'),
+(10, 5, 'Football', 799.00, 60, 'Standard size football for sports');
+
