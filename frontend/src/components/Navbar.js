@@ -1,6 +1,8 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+import "../App.css"; // Import CSS
+
 export default function Navbar() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user") || "null");
@@ -11,22 +13,25 @@ export default function Navbar() {
   };
 
   return (
-    <div style={{ padding: 10, background: "#eee", display: "flex", gap: 10 }}>
-      <Link to="/home">Home</Link>
-      {user && <Link to="/cart">Cart</Link>}
-      {user && user.is_admin && <Link to="/admin">Admin</Link>}
-      <div style={{ marginLeft: "auto" }}>
+    <nav className="navbar">
+      <div className="navbar-left">
+        {user && !user.is_admin && <Link to="/home" className="nav-link">Home</Link>}
+        {user && !user.is_admin && <Link to="/cart" className="nav-link">Cart</Link>}
+        {user && !user.is_admin && <Link to="/user/orders" className="nav-link">Orders</Link>}
+        {user && user.is_admin && <Link to="/admin" className="nav-link">Admin</Link>}
+      </div>
+      <div className="navbar-right">
         {user ? (
           <>
-            <span style={{ marginRight: 10 }}>Hi, {user.name}</span>
-            <button onClick={logout}>Logout</button>
+            <span className="nav-greet">Hi, {user.name}</span>
+            <button className="action-btn delete-btn" onClick={logout}>Logout</button>
           </>
         ) : (
           <>
-            <Link to="/">Login</Link> | <Link to="/signup">Signup</Link>
+            <Link to="/" className="nav-link">Login</Link> | <Link to="/signup" className="nav-link">Signup</Link>
           </>
         )}
       </div>
-    </div>
+    </nav>
   );
 }

@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import ProductCard from "../components/ProductCard";
-
+import "../App.css"; // Import CSS
 const API = "http://localhost:5000";
 
 export default function Home() {
   const [products, setProducts] = useState([]);
   const [cats, setCats] = useState([]);
   const [filter, setFilter] = useState("");
+  const [message, setMessage] = useState(null); // <-- New state for messages
   const user = JSON.parse(localStorage.getItem("user") || "null");
 
   useEffect(() => {
@@ -23,7 +24,7 @@ export default function Home() {
       setProducts(data);
     } catch (err) {
       console.error("Failed to fetch products:", err);
-      alert("Failed to fetch products. Check backend.");
+      setMessage({ type: "error", text: "Failed to fetch products. Check backend." });
     }
   };
 
@@ -34,17 +35,17 @@ export default function Home() {
       setCats(data);
     } catch (err) {
       console.error("Failed to fetch categories:", err);
-      alert("Failed to fetch categories. Check backend.");
+      setMessage({ type: "error", text: "Failed to fetch categories. Check backend." });
     }
   };
 
   const addToCart = async (product_id) => {
     if (!user) { 
-      alert("Please login first"); 
+      setMessage({ type: "error", text: "Please login first" });
       return; 
     }
     try {
-      const res = await fetch(API + "/cart/", {  // ensure trailing slash
+      const res = await fetch(API + "/cart/", {  
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
@@ -54,19 +55,36 @@ export default function Home() {
         }),
       });
       const data = await res.json();
-      if (data.success) alert("Added to cart");
-      else alert(data.message || "Error adding to cart");
+      if (data.success) {
+        setMessage({ type: "success", text: "Added to cart" });
+      } else {
+        setMessage({ type: "error", text: data.message || "Error adding to cart" });
+      }
     } catch (err) {
       console.error("Add to cart error:", err);
-      alert("Failed to fetch. Check backend or network.");
+      setMessage({ type: "error", text: "Failed to fetch. Check backend or network." });
     }
+
+    // Hide message after 3 seconds
+    setTimeout(() => setMessage(null), 3000);
   };
 
   return (
-    <div>
+    <div className="container">
       <h2>Products</h2>
-      <div style={{ marginBottom: 10 }}>
-        <select 
+
+      {/* Message Box */}
+      {message && (
+        <div className={`alert ${message.type === "success" ? "alert-success" : "alert-error"}`}>
+          {message.text}
+        </div>
+      )}
+
+      <div className="form-group">
+        <label htmlFor="categoryFilter">Filter by Category:</label>
+        <select
+          id="categoryFilter"
+          className="form-control"
           value={filter}
           onChange={e => { 
             setFilter(e.target.value); 
@@ -80,7 +98,7 @@ export default function Home() {
         </select>
       </div>
 
-      <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+      <div className="cards-grid">
         {products.map(p => (
           <ProductCard key={p.product_id} p={p} onAdd={addToCart} />
         ))}

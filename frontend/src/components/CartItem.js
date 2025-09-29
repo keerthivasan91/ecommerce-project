@@ -1,21 +1,17 @@
 import React from "react";
+import "../App.css"; // Import CSS
 
 export default function CartItem({ item, onRemove }) {
   return (
-    <div style={{
-      border: "1px solid #ddd",
-      padding: 10,
-      marginBottom: 10,
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center"
-    }}>
-      <div>
+    <div className="cart-item">
+      <div className="cart-item-info">
         <h4>{item.name}</h4>
         <div>Price: ₹{item.price}</div>
         <div>Quantity: {item.quantity}</div>
       </div>
-      <button onClick={() => onRemove(item.cart_id)}>Remove</button>
+      <button className="action-btn delete-btn" onClick={() => onRemove(item.cart_id)}>
+        Remove
+      </button>
     </div>
   );
 }

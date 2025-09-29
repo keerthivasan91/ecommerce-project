@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "../App.css"; // Import CSS
 
 const API = "http://localhost:5000";
 
@@ -26,13 +27,20 @@ export default function Admin() {
 
   const fetchAll = async () => {
     setLoading(true);
-    await Promise.all([fetchCustomers(), fetchProducts(), fetchCategories(), fetchOrders()]);
+    await Promise.all([
+      fetchCustomers(),
+      fetchProducts(),
+      fetchCategories(),
+      fetchOrders(),
+    ]);
     setLoading(false);
   };
 
   const fetchCustomers = async () => {
     try {
-      const res = await fetch(`${API}/customers?admin_email=${admin.email}&admin_password=${admin.password}`);
+      const res = await fetch(
+        `${API}/customers?admin_email=${admin.email}&admin_password=${admin.password}`
+      );
       const data = await res.json();
       setCustomers(data);
     } catch (err) {
@@ -88,19 +96,32 @@ export default function Admin() {
     }
   };
 
-  if (!admin || !admin.is_admin) return <div style={{ color: "red" }}>Not authorized</div>;
+  if (!admin || !admin.is_admin)
+    return <div style={{ color: "red" }}>Not authorized</div>;
   if (loading) return <div>Loading admin dashboard...</div>;
 
   return (
-    <div className="container">
+    <div className="admin-container">
       <h2>Admin Dashboard</h2>
-      {statusMessage && <div style={{ color: "green", marginBottom: 10 }}>{statusMessage}</div>}
+      {statusMessage && <div className="status-message">{statusMessage}</div>}
 
       {/* Customers */}
+      <h3>
+        Customers
+        <button
+          className="action-btn update-btn"
+          style={{ marginLeft: 10 }}
+          onClick={() =>
+            navigate("/admin-form", { state: { type: "customer" } })
+          }
+        >
+          Add New
+        </button>
+      </h3>
       {customers.length === 0 ? (
         <div>No customers found.</div>
       ) : (
-        <table border="1" cellPadding="5">
+        <table className="table">
           <thead>
             <tr>
               <th>ID</th>
@@ -118,13 +139,24 @@ export default function Admin() {
                 <td>{c.email}</td>
                 <td>{c.is_admin ? "Yes" : "No"}</td>
                 <td>
-                  <button onClick={() => navigate("/admin-form", { state: { type: "customer", data: c } })}>
+                  <button
+                    className="action-btn update-btn"
+                    onClick={() =>
+                      navigate("/admin-form", {
+                        state: { type: "customer", data: c },
+                      })
+                    }
+                  >
                     Update
                   </button>
                   <button
-                    style={{ marginLeft: 5 }}
+                    className="action-btn delete-btn"
                     onClick={() =>
-                      handleDelete(`${API}/customers/${c.customer_id}`, fetchCustomers, "Customer deleted successfully")
+                      handleDelete(
+                        `${API}/customers/${c.customer_id}`,
+                        fetchCustomers,
+                        "Customer deleted successfully"
+                      )
                     }
                   >
                     Delete
@@ -139,14 +171,20 @@ export default function Admin() {
       {/* Products */}
       <h3>
         Products
-        <button style={{ marginLeft: 10 }} onClick={() => navigate("/admin-form", { state: { type: "product" } })}>
+        <button
+          className="action-btn update-btn"
+          style={{ marginLeft: 10 }}
+          onClick={() =>
+            navigate("/admin-form", { state: { type: "product" } })
+          }
+        >
           Add New
         </button>
       </h3>
       {products.length === 0 ? (
         <div>No products found.</div>
       ) : (
-        <table border="1" cellPadding="5">
+        <table className="table">
           <thead>
             <tr>
               <th>ID</th>
@@ -155,6 +193,7 @@ export default function Admin() {
               <th>Price</th>
               <th>Stock</th>
               <th>Actions</th>
+              <th>Reviews</th> {/* New column */}
             </tr>
           </thead>
           <tbody>
@@ -166,16 +205,43 @@ export default function Admin() {
                 <td>₹{p.price}</td>
                 <td>{p.stock}</td>
                 <td>
-                  <button onClick={() => navigate("/admin-form", { state: { type: "product", data: p } })}>
+                  <button
+                    className="action-btn update-btn"
+                    onClick={() =>
+                      navigate("/admin-form", {
+                        state: { type: "product", data: p },
+                      })
+                    }
+                  >
                     Update
                   </button>
                   <button
-                    style={{ marginLeft: 5 }}
+                    className="action-btn delete-btn"
                     onClick={() =>
-                      handleDelete(`${API}/products/${p.product_id}`, fetchProducts, "Product deleted successfully")
+                      handleDelete(
+                        `${API}/products/${p.product_id}`,
+                        fetchProducts,
+                        "Product deleted successfully"
+                      )
                     }
                   >
                     Delete
+                  </button>
+                </td>
+                <td>
+                  <button
+                    className="action-btn review-btn"
+                    onClick={() =>
+                      navigate("/admin-form", {
+                        state: {
+                          type: "reviews",
+                          productId: p.product_id,
+                          data: p,
+                        },
+                      })
+                    }
+                  >
+                    View Reviews
                   </button>
                 </td>
               </tr>
@@ -187,14 +253,20 @@ export default function Admin() {
       {/* Categories */}
       <h3>
         Categories
-        <button style={{ marginLeft: 10 }} onClick={() => navigate("/admin-form", { state: { type: "category" } })}>
+        <button
+          className="action-btn update-btn"
+          style={{ marginLeft: 10 }}
+          onClick={() =>
+            navigate("/admin-form", { state: { type: "category" } })
+          }
+        >
           Add New
         </button>
       </h3>
       {categories.length === 0 ? (
         <div>No categories found.</div>
       ) : (
-        <table border="1" cellPadding="5">
+        <table className="table">
           <thead>
             <tr>
               <th>ID</th>
@@ -208,13 +280,24 @@ export default function Admin() {
                 <td>{c.category_id}</td>
                 <td>{c.name}</td>
                 <td>
-                  <button onClick={() => navigate("/admin-form", { state: { type: "category", data: c } })}>
+                  <button
+                    className="action-btn update-btn"
+                    onClick={() =>
+                      navigate("/admin-form", {
+                        state: { type: "category", data: c },
+                      })
+                    }
+                  >
                     Update
                   </button>
                   <button
-                    style={{ marginLeft: 5 }}
+                    className="action-btn delete-btn"
                     onClick={() =>
-                      handleDelete(`${API}/categories/${c.category_id}`, fetchCategories, "Category deleted successfully")
+                      handleDelete(
+                        `${API}/categories/${c.category_id}`,
+                        fetchCategories,
+                        "Category deleted successfully"
+                      )
                     }
                   >
                     Delete
@@ -231,21 +314,29 @@ export default function Admin() {
       {orders.length === 0 ? (
         <div>No orders found.</div>
       ) : (
-        orders.map((o) => (
-          <div key={o.order_id} style={{ border: "1px solid #ddd", padding: 10, marginBottom: 10 }}>
-            <h4>Order ID: {o.order_id}</h4>
-            <p>Customer ID: {o.customer_id}</p>
-            <p>Date: {o.order_date || "-"}</p>
-            <h5>Items:</h5>
-            <ul>
-              {o.items.map((it) => (
-                <li key={it.order_item_id}>
-                  {it.name} - Qty: {it.quantity} - ₹{it.price}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))
+        <div className="orders-grid">
+          {orders.map((o) => (
+            <div key={o.order_id} className="order-card">
+              <h4>Order ID: {o.order_id}</h4>
+              <p>
+                <strong>Customer ID:</strong> {o.customer_id}
+              </p>
+              <p>
+                <p>
+                  <strong>Date:</strong> {o.date_created}
+                </p>
+              </p>
+              <h5>Items:</h5>
+              <ul>
+                {o.items.map((it) => (
+                  <li key={it.order_item_id}>
+                    {it.name} – Qty: {it.quantity} – ₹{it.price}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );

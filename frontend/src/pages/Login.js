@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import "../App.css"; // Import CSS
 const API = "http://localhost:5000";
 
 export default function Login() {
@@ -29,7 +29,13 @@ export default function Login() {
           is_admin: data.is_admin,
         };
         localStorage.setItem("user", JSON.stringify(user));
-        nav("/home");
+
+        // Navigate based on admin status
+        if (data.is_admin) {
+          nav("/admin");
+        } else {
+          nav("/home");
+        }
       } else {
         setStatusMessage(data.message || "Login failed");
       }
@@ -40,31 +46,47 @@ export default function Login() {
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: "50px auto" }}>
+    <div className="container" style={{ maxWidth: 400, marginTop: 50 }}>
       <h2>Login</h2>
-      {statusMessage && <div style={{ color: "red", marginBottom: 10 }}>{statusMessage}</div>}
+
+      {statusMessage && (
+        <div
+          className={`alert ${
+            statusMessage.includes("failed") ? "alert-error" : "alert-success"
+          }`}
+        >
+          {statusMessage}
+        </div>
+      )}
+
       <form onSubmit={submit}>
-        <div style={{ marginBottom: 10 }}>
+        <div className="form-group">
           <input
+            type="email"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            style={{ width: "100%", padding: 8 }}
+            className="form-control"
+            required
           />
         </div>
-        <div style={{ marginBottom: 10 }}>
+
+        <div className="form-group">
           <input
-            placeholder="Password"
             type="password"
+            placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            style={{ width: "100%", padding: 8 }}
+            className="form-control"
+            required
           />
         </div>
-        <button type="submit" style={{ padding: 10, width: "100%" }}>
+
+        <button type="submit" className="btn btn-primary btn-large">
           Login
         </button>
       </form>
+
       <p style={{ marginTop: 10 }}>
         Don't have an account? <a href="/signup">Sign up</a>
       </p>
