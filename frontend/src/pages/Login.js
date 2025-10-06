@@ -46,7 +46,7 @@ export default function Login() {
   };
 
   return (
-    <div className="container" style={{ maxWidth: 400, marginTop: 50 }}>
+    <div className="container page-container" style={{ maxWidth: 400, marginTop: "120px", margin: "130px auto" }}>
       <h2>Login</h2>
 
       {statusMessage && (
@@ -82,13 +82,13 @@ export default function Login() {
           />
         </div>
 
-        <button type="submit" className="btn btn-primary btn-large">
+        <button type="submit" className="btn btn-primary btn-large" style={{ display: "block", margin: "0 auto" }}>
           Login
         </button>
       </form>
 
-      <p style={{ marginTop: 10 }}>
-        Don't have an account? <a href="/signup">Sign up</a>
+      <p style={{ marginTop: 20 , textAlign: "center" }}>
+        Don't have an account? <a style={{ color: "#e74c3c" }} href="/signup">Sign up</a>
       </p>
     </div>
   );
