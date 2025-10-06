@@ -34,6 +34,7 @@ def get_products():
 @products_bp.route('', methods=['POST'])
 def add_product():
     data = request.get_json()
+    product_id = data.get('product_id')
     name = data.get('name')
     price = data.get('price', 0)
     stock = data.get('stock', 0)
@@ -51,11 +52,11 @@ def add_product():
         cursor.execute("SELECT is_admin FROM customers WHERE email=%s AND password=%s", (admin_email, admin_password))
         r = cursor.fetchone()
         if not r or r[0] != 1:
-            return jsonify({"success": False, "message": "Not authorized"}), 403
+            return jsonify({"success": False, "message": "Not authorized"}), 403 
 
         cursor.execute(
-            "INSERT INTO products (category_id, name, price, stock, description) VALUES (%s,%s,%s,%s,%s)",
-            (category_id, name, price, stock, description)
+            "INSERT INTO products (product_id, category_id, name, price, stock, description) VALUES (%s,%s,%s,%s,%s,%s)",
+            (product_id, category_id, name, price, stock, description)
         )
         conn.commit()
         return jsonify({"success": True, "message": "Product added"})
@@ -69,6 +70,7 @@ def add_product():
 @products_bp.route('/<int:product_id>', methods=['PUT'])
 def update_product(product_id):
     data = request.get_json()
+    product_id = data.get('product_id')
     name = data.get('name')
     price = data.get('price')
     stock = data.get('stock')
@@ -88,8 +90,8 @@ def update_product(product_id):
             return jsonify({"success": False, "message": "Not authorized"}), 403
 
         cursor.execute(
-            "UPDATE products SET name=%s, price=%s, stock=%s, category_id=%s WHERE product_id=%s",
-            (name, price, stock, category_id, product_id)
+            "UPDATE products SET product_id=%s, price=%s, stock=%s, category_id=%s WHERE product_id=%s",
+            (product_id, price, stock, category_id, product_id)
         )
         conn.commit()
         return jsonify({"success": True, "message": "Product updated"})
