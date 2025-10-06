@@ -33,7 +33,7 @@ def add_review():
         cursor.close()
         conn.close()
 
-@reviews_bp.route('/<int:product_id>', methods=['GET'])
+@reviews_bp.route('/<string:product_id>', methods=['GET'])
 def get_reviews(product_id):
     # Only fetch reviews, no credentials required
     conn = get_db()
