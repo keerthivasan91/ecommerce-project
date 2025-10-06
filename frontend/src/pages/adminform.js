@@ -173,6 +173,16 @@ export default function AdminForm() {
             {type === "product" && (
               <>
                 <div className="form-group">
+                  <label className="form-label">product_id:</label>
+                  <input
+                    className="form-control"
+                    type="text"
+                    value={form.product_id}
+                    onChange={(e) => setForm({ ...form, product_id: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="form-group">
                   <label className="form-label">Name:</label>
                   <input
                     className="form-control"
@@ -229,7 +239,7 @@ export default function AdminForm() {
                 </div>
               </>
             )}
-
+            <br />
             {/* Submit & Cancel Buttons */}
             {type !== "reviews" && (
               <>
