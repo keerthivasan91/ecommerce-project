@@ -105,5 +105,7 @@ INSERT INTO products (product_id, category_id, name, price, stock, description) 
 (7, 3, 'Jeans', 999.00, 40, 'Denim jeans for daily wear'),
 (8, 4, 'Microwave Oven', 5499.00, 15, 'Compact microwave oven'),
 (9, 4, 'Blender', 1999.00, 20, 'High-speed blender'),
-(10, 5, 'Football', 799.00, 60, 'Standard size football for sports');
+(10, 5, 'Football', 799.00, 60, 'Standard size football for sports'),
+(11, 4, 'Samsung Smart TV 55 inch', 49000.00, 10, '55 inch 4K Smart TV'),
+(12, 1, 'Gaming Console', 29999.00, 5, 'Latest generation gaming console');
 
