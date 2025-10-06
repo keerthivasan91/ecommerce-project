@@ -8,6 +8,10 @@ def dict_from_cursor(cursor):
     rows = cursor.fetchall()
     return [dict(zip(cols, r)) for r in rows]
 
+def dict_from_cursor_row(cursor, row):
+    cols = [c[0] for c in cursor.description]
+    return dict(zip(cols, row))
+
 @products_bp.route('/', methods=['GET'])
 def get_products():
     category_id = request.args.get('category_id')
@@ -28,6 +32,31 @@ def get_products():
         data = dict_from_cursor(cursor)
         return jsonify(data)
     finally:
+        cursor.close()
+        conn.close()
+
+@products_bp.route('/<path:product_name>', methods=['GET'])
+def get_product(product_name):
+    conn = get_db()
+    cursor = conn.cursor()
+    product_name = product_name.strip()
+    try:
+        cursor.execute(
+            "SELECT p.*, c.name as category FROM products p "
+            "LEFT JOIN categories c ON p.category_id=c.category_id "
+            "WHERE LOWER(p.name) LIKE LOWER(%s)",
+            (f"%{product_name}%",)  # Wrap in % for partial match
+        )
+
+        product = cursor.fetchone()
+        
+        if product:
+            data = dict_from_cursor_row(cursor, product)
+            return jsonify(data)
+        else:
+            return jsonify({'error': 'Product not found'}), 404
+    finally:
+        
         cursor.close()
         conn.close()
 
