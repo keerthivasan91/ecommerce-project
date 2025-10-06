@@ -87,3 +87,21 @@ INSERT IGNORE INTO customers (name, email, password, is_admin)
 VALUES ('Admin', 'admin@ecommerce.com', 'admin123', 1);
 
 -- Insert categories with manual IDs
+INSERT IGNORE INTO categories (category_id, name) VALUES
+(1, 'Electronics'),
+(2, 'Books'),
+(3, 'Clothing'),
+(4, 'Home & Kitchen'),
+(5, 'Sports & Outdoors');
+-- Insert products with manual IDs
+INSERT IGNORE INTO products (product_id, category_id, name, price, stock, description) VALUES
+('P001', 1, 'Smartphone', 699.99, 50, 'Latest model smartphone with advanced features.'),
+('P002', 1, 'Laptop', 999.99, 30, 'High-performance laptop for work and gaming.'),
+('P003', 2, 'Fiction Book', 19.99, 100, 'Bestselling fiction book by a renowned author.'),
+('P004', 2, 'Science Book', 29.99, 80, 'Informative science book for enthusiasts.'),
+('P005', 3, 'T-Shirt', 15.99, 200, 'Comfortable cotton t-shirt available in various sizes.'),
+('P006', 3, 'Jeans', 49.99, 150, 'Stylish denim jeans with a perfect fit.'),
+('P007', 4, 'Blender', 59.99, 40, 'High-speed blender for smoothies and more.'),
+('P008', 4, 'Cookware Set', 89.99, 25, 'Durable cookware set for all your cooking needs.'),
+('P009', 5, 'Yoga Mat', 25.99, 70, 'Non-slip yoga mat for all types of exercises.'),
+('P010', 5, 'Dumbbell Set', 79.99, 60, 'Adjustable dumbbell set for strength training.');
