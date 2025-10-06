@@ -31,7 +31,7 @@ export default function Signup() {
   };
 
   return (
-    <div className="container page-container" style={{ maxWidth: 400, marginTop: "120px", margin: "60px auto" }}>
+    <div className="container page-container" style={{ maxWidth: 400, marginTop: "120px", margin: "130px auto" }}>
       <h2 style={{ textAlign: "center" }}>Signup</h2>
 
       {statusMessage && (
