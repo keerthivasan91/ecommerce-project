@@ -100,7 +100,7 @@ export default function Home() {
 
       <div className="cards-grid">
         {products.map(p => (
-          <ProductCard key={p.product_id} p={p} onAdd={addToCart} />
+          <ProductCard key={p.product_id} p={p} desc={p.description} onAdd={addToCart} />
         ))}
       </div>
     </div>
