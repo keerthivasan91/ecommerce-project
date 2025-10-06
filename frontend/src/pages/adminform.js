@@ -203,6 +203,15 @@ export default function AdminForm() {
                   />
                 </div>
                 <div className="form-group">
+                  <label className="form-label">Desc:</label>
+                  <input
+                    className="form-control"
+                    type="text"
+                    value={form.description}
+                    onChange={(e) => setForm({ ...form, description: e.target.value })}
+                  />
+                </div>
+                <div className="form-group">
                   <label className="form-label">Category:</label>
                   <select
                     className="form-control"
