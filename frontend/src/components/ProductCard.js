@@ -9,6 +9,7 @@ export default function ProductCard({ p, onAdd }) {
       </div>
       <div className="product-price">₹{p.price}</div>
       <div className="product-description" style={{ marginBottom: '12px' }}>
+        {p.description || "No description available."} <br />
         Stock: {p.stock}
       </div>
       <button 
