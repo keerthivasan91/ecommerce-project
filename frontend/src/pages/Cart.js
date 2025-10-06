@@ -55,7 +55,7 @@ export default function Cart() {
   const total = items.reduce((s, it) => s + it.price * it.quantity, 0);
 
   return (
-    <div className="container page-container">
+    <div className="container page-container" style={{ maxWidth: 800, marginTop: "120px", margin: "60px auto" }}>
       <h2>Your Cart</h2>
 
       {items.length === 0 && <div>Cart is empty</div>}
@@ -65,11 +65,11 @@ export default function Cart() {
       ))}
 
       {items.length > 0 && (
-        <div className="cart-summary">
-          <div className="cart-total">Total: ₹{total.toFixed(2)}</div>
-          <button className="action-btn update-btn" onClick={checkout}>
+        <div className="cart-summary" style={{ marginTop: "20px" }}>
+          <div className="cart-total" style={{ textAlign: "center" }}>Total: ₹{total.toFixed(2)}</div>
+          <div style={{display: "flex", alignItems: "center", justifyContent: "center" , marginTop:"20px"}}><button className="action-btn update-btn" style={{ backgroundColor: "green", color: "white" }} onClick={checkout}>
             Proceed to Checkout
-          </button>
+          </button></div>
         </div>
       )}
     </div>
