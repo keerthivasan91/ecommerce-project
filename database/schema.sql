@@ -1,5 +1,6 @@
 -- create database if not exists
-CREATE DATABASE IF NOT EXISTS ecommerce_db;
+DROP DATABASE IF EXISTS ecommerce_db;
+CREATE DATABASE ecommerce_db;
 USE ecommerce_db;
 
 -- Customers
@@ -105,3 +106,16 @@ INSERT IGNORE INTO products (product_id, category_id, name, price, stock, descri
 ('P008', 4, 'Cookware Set', 89.99, 25, 'Durable cookware set for all your cooking needs.'),
 ('P009', 5, 'Yoga Mat', 25.99, 70, 'Non-slip yoga mat for all types of exercises.'),
 ('P010', 5, 'Dumbbell Set', 79.99, 60, 'Adjustable dumbbell set for strength training.');
+
+-- Prevent insertion if rating is outside 1-5 range
+DELIMITER $$
+CREATE TRIGGER validate_review_rating
+BEFORE INSERT ON reviews
+FOR EACH ROW
+BEGIN
+    IF NEW.rating < 1 OR NEW.rating > 5 THEN
+        SIGNAL SQLSTATE '45000' 
+        SET MESSAGE_TEXT = 'Rating must be between 1 and 5';
+    END IF;
+END$$
+DELIMITER ;
