@@ -85,8 +85,6 @@ export default function Review() {
           <label className="form-label">Rating (1-5)</label>
           <input
             type="number"
-            min="1"
-            max="5"
             value={rating}
             onChange={(e) => setRating(Number(e.target.value))}
             className="form-control"
