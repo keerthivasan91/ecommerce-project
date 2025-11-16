@@ -67,7 +67,7 @@ ecommerce-project/
 
 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/ecommerce-project.git
+git clone https://github.com/keerthivasan91/ecommerce-project.git
 cd ecommerce-project
 ```
 
