@@ -96,7 +96,7 @@ def add_product():
         cursor.close()
         conn.close()
 
-@products_bp.route('/<int:product_id>', methods=['PUT'])
+@products_bp.route('/<string:product_id>', methods=['PUT'])
 def update_product(product_id):
     data = request.get_json()
     product_id = data.get('product_id')
@@ -131,7 +131,7 @@ def update_product(product_id):
         cursor.close()
         conn.close()
 
-@products_bp.route('/<int:product_id>', methods=['DELETE'])
+@products_bp.route('/<string:product_id>', methods=['DELETE'])
 def delete_product(product_id):
     admin_email = request.args.get("admin_email")
     admin_password = request.args.get("admin_password")
